@@ -231,52 +231,100 @@
         <div class="view-panel" id="calculatorView">
             <div class="page-header">
                 <div class="page-title">
-                    <h1>Standalone GPA Calculator</h1>
-                    <p>Enter subjects marks to evaluate GPA and Honors Classifications.</p>
+                    <h1>University CGPA Calculator</h1>
+                    <p>Dynamically manage courses, credits, and grade points to evaluate your weighted Cumulative GPA.</p>
                 </div>
             </div>
 
-            <div class="calculator-container">
-                <div class="calculator-panel glass-panel">
-                    <h2>Enter Marks for 5 Core Subjects</h2>
-                    <form id="calcForm">
-                        <div class="calc-marks-grid">
-                            <div class="calc-input-row">
-                                <span class="subject-name-label">Subject 1 (Math)</span>
-                                <input class="input-field calc-mark-input" type="number" min="0" max="100" required value="85" data-index="0">
-                                <div class="calc-indicator" id="calcInd-0">Grade: A (3.75)</div>
-                            </div>
-                            <div class="calc-input-row">
-                                <span class="subject-name-label">Subject 2 (Physics)</span>
-                                <input class="input-field calc-mark-input" type="number" min="0" max="100" required value="78" data-index="1">
-                                <div class="calc-indicator" id="calcInd-1">Grade: B+ (3.25)</div>
-                            </div>
-                            <div class="calc-input-row">
-                                <span class="subject-name-label">Subject 3 (Chemistry)</span>
-                                <input class="input-field calc-mark-input" type="number" min="0" max="100" required value="92" data-index="2">
-                                <div class="calc-indicator" id="calcInd-2">Grade: A+ (4.00)</div>
-                            </div>
-                            <div class="calc-input-row">
-                                <span class="subject-name-label">Subject 4 (Comp Science)</span>
-                                <input class="input-field calc-mark-input" type="number" min="0" max="100" required value="88" data-index="3">
-                                <div class="calc-indicator" id="calcInd-3">Grade: A (3.75)</div>
-                            </div>
-                            <div class="calc-input-row">
-                                <span class="subject-name-label">Subject 5 (English)</span>
-                                <input class="input-field calc-mark-input" type="number" min="0" max="100" required value="74" data-index="4">
-                                <div class="calc-indicator" id="calcInd-4">Grade: B (3.00)</div>
-                            </div>
+            <div class="calculator-container" style="grid-template-columns: 1.5fr 1fr;">
+                <div class="calculator-panel glass-panel" style="padding: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="margin: 0; font-size: 1.2rem;">Semester Courses & Weights</h2>
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="btn-primary" id="btnAddCalcRow" style="padding: 8px 16px; font-size: 0.85rem;">
+                                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                                Add Course
+                            </button>
+                            <button type="button" class="btn-secondary" id="btnClearCalcRows" style="padding: 8px 16px; font-size: 0.85rem; border-color: rgba(255, 71, 87, 0.4); color: var(--accent-danger);">
+                                Clear All
+                            </button>
                         </div>
-                    </form>
+                    </div>
+                    
+                    <div style="overflow-x: auto; margin-bottom: 10px;">
+                        <table class="students-table" style="min-width: 500px;">
+                            <thead>
+                                <tr>
+                                    <th style="padding: 10px 14px; font-size: 0.8rem;">Course Title / Code</th>
+                                    <th style="padding: 10px 14px; font-size: 0.8rem; width: 120px;">Credits (W)</th>
+                                    <th style="padding: 10px 14px; font-size: 0.8rem; width: 140px;">Grade Point (GP)</th>
+                                    <th style="padding: 10px 14px; font-size: 0.8rem; width: 80px;">Grade</th>
+                                    <th style="padding: 10px 14px; font-size: 0.8rem; width: 60px; text-align: center;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="calcCourseRows">
+                                <!-- Populated dynamically or pre-loaded below -->
+                                <tr class="calc-row">
+                                    <td style="padding: 10px 14px;"><input class="input-field calc-course-name" type="text" required value="Data Structures & Algorithms" placeholder="Course Name" style="padding: 8px 12px; font-size: 0.9rem;"></td>
+                                    <td style="padding: 10px 14px;"><input class="input-field calc-course-credits" type="number" min="0.5" max="6.0" step="0.5" required value="4.0" style="padding: 8px 12px; font-size: 0.9rem;"></td>
+                                    <td style="padding: 10px 14px;"><input class="input-field calc-course-gp" type="number" min="0.00" max="4.00" step="0.01" required value="3.75" style="padding: 8px 12px; font-size: 0.9rem;"></td>
+                                    <td style="padding: 10px 14px; text-align: center; font-weight: 700; color: var(--accent-primary);" class="calc-row-grade">A</td>
+                                    <td style="padding: 10px 14px; text-align: center;">
+                                        <button class="btn-action btn-delete-calc-row" style="margin: 0 auto;" title="Remove Course">
+                                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="calc-row">
+                                    <td style="padding: 10px 14px;"><input class="input-field calc-course-name" type="text" required value="Database Systems" placeholder="Course Name" style="padding: 8px 12px; font-size: 0.9rem;"></td>
+                                    <td style="padding: 10px 14px;"><input class="input-field calc-course-credits" type="number" min="0.5" max="6.0" step="0.5" required value="3.0" style="padding: 8px 12px; font-size: 0.9rem;"></td>
+                                    <td style="padding: 10px 14px;"><input class="input-field calc-course-gp" type="number" min="0.00" max="4.00" step="0.01" required value="4.00" style="padding: 8px 12px; font-size: 0.9rem;"></td>
+                                    <td style="padding: 10px 14px; text-align: center; font-weight: 700; color: var(--accent-success);" class="calc-row-grade">A+</td>
+                                    <td style="padding: 10px 14px; text-align: center;">
+                                        <button class="btn-action btn-delete-calc-row" style="margin: 0 auto;" title="Remove Course">
+                                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr class="calc-row">
+                                    <td style="padding: 10px 14px;"><input class="input-field calc-course-name" type="text" required value="Calculus & Linear Algebra" placeholder="Course Name" style="padding: 8px 12px; font-size: 0.9rem;"></td>
+                                    <td style="padding: 10px 14px;"><input class="input-field calc-course-credits" type="number" min="0.5" max="6.0" step="0.5" required value="3.0" style="padding: 8px 12px; font-size: 0.9rem;"></td>
+                                    <td style="padding: 10px 14px;"><input class="input-field calc-course-gp" type="number" min="0.00" max="4.00" step="0.01" required value="3.00" style="padding: 8px 12px; font-size: 0.9rem;"></td>
+                                    <td style="padding: 10px 14px; text-align: center; font-weight: 700; color: var(--accent-warning);" class="calc-row-grade">B</td>
+                                    <td style="padding: 10px 14px; text-align: center;">
+                                        <button class="btn-action btn-delete-calc-row" style="margin: 0 auto;" title="Remove Course">
+                                            <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
-                <div class="calc-results-panel glass-panel">
-                    <div class="gpa-circle">
-                        <div class="gpa-circle-value" id="calcGpaValue">3.55</div>
-                        <div class="gpa-circle-label">Semester GPA</div>
+                <div class="calc-results-panel glass-panel" style="padding: 24px;">
+                    <div class="gpa-circle" style="width: 140px; height: 140px; margin-bottom: 16px;">
+                        <div class="gpa-circle-value" id="calcGpaValue" style="font-size: 2.5rem;">3.60</div>
+                        <div class="gpa-circle-label" style="font-size: 0.75rem;">Semester CGPA</div>
                     </div>
-                    <div class="honors-badge good" id="calcHonorsBadge">Second Class Upper / Good</div>
-                    <div class="calc-verdict-text" id="calcVerdictText">Excellent work! Maintaining a high GPA opens up honors classifications and advanced enrollment opportunities.</div>
+                    <div class="honors-badge good" id="calcHonorsBadge" style="font-size: 0.9rem; padding: 6px 16px; margin-bottom: 16px;">Second Class Upper / Good</div>
+                    
+                    <div style="width: 100%; border-top: 1px solid var(--border-light); padding-top: 16px; margin-top: 4px; text-align: left; font-size: 0.85rem;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="color: var(--text-secondary);">Total Credits Earned:</span>
+                            <strong id="calcTotalCredits" style="color: var(--accent-info);">10.0</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 6px;">
+                            <span style="color: var(--text-secondary);">Total Credit Points:</span>
+                            <strong id="calcTotalPoints" style="color: var(--accent-success);">36.00</strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span style="color: var(--text-secondary);">CGPA Formula:</span>
+                            <span id="calcCgpaFormula" style="font-family: var(--font-mono); font-size: 0.8rem; font-weight: 600; color: var(--text-primary);">36.00 / 10.00</span>
+                        </div>
+                    </div>
+
+                    <div class="calc-verdict-text" id="calcVerdictText" style="font-size: 0.85rem; color: var(--text-secondary); margin-top: 8px;">Good academic standing. Keep pushing to break into the First Class honors band!</div>
                 </div>
             </div>
         </div>

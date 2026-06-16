@@ -409,52 +409,154 @@ function closeDrawer() {
 }
 
 /**
+ * Helper to map GPA to letter grade for dynamic rows
+ */
+function gpToLetterGrade(gp) {
+    if (gp >= 4.00) return 'A+';
+    if (gp >= 3.75) return 'A';
+    if (gp >= 3.50) return 'A-';
+    if (gp >= 3.25) return 'B+';
+    if (gp >= 3.00) return 'B';
+    if (gp >= 2.75) return 'B-';
+    if (gp >= 2.50) return 'C+';
+    if (gp >= 2.25) return 'C';
+    if (gp >= 2.00) return 'D';
+    return 'F';
+}
+
+/**
+ * Calculates weighted university CGPA from dynamic rows
+ */
+function calculateUniversityCGPA() {
+    const rows = document.querySelectorAll('#calcCourseRows .calc-row');
+    let totalCredits = 0;
+    let totalPoints = 0;
+    
+    rows.forEach(row => {
+        const creditsInput = row.querySelector('.calc-course-credits');
+        const gpInput = row.querySelector('.calc-course-gp');
+        const gradeEl = row.querySelector('.calc-row-grade');
+        
+        const credits = parseFloat(creditsInput.value) || 0;
+        const gp = parseFloat(gpInput.value) || 0;
+        
+        const grade = gpToLetterGrade(gp);
+        gradeEl.innerText = grade;
+        
+        // Color coding for grade cell
+        if (gp >= 3.50) {
+            gradeEl.style.color = 'var(--accent-success)';
+        } else if (gp >= 3.00) {
+            gradeEl.style.color = 'var(--accent-primary)';
+        } else if (gp >= 2.00) {
+            gradeEl.style.color = 'var(--accent-warning)';
+        } else {
+            gradeEl.style.color = 'var(--accent-danger)';
+        }
+        
+        totalCredits += credits;
+        totalPoints += credits * gp;
+    });
+    
+    const finalCGPA = totalCredits > 0 ? (totalPoints / totalCredits) : 0;
+    
+    document.getElementById('calcGpaValue').innerText = finalCGPA.toFixed(2);
+    document.getElementById('calcTotalCredits').innerText = totalCredits.toFixed(1);
+    document.getElementById('calcTotalPoints').innerText = totalPoints.toFixed(2);
+    document.getElementById('calcCgpaFormula').innerText = totalCredits > 0 
+        ? `${totalPoints.toFixed(2)} / ${totalCredits.toFixed(1)}` 
+        : '0.00 / 0.0';
+        
+    const honorsBadge = document.getElementById('calcHonorsBadge');
+    const verdictText = document.getElementById('calcVerdictText');
+    
+    honorsBadge.className = 'honors-badge'; // Reset class
+    if (finalCGPA >= 3.75) {
+        honorsBadge.innerText = 'First Class / Excellent';
+        honorsBadge.classList.add('excellent');
+        verdictText.innerText = 'Exceptional performance! You qualify for the highest academic Honors Classifications.';
+    } else if (finalCGPA >= 3.00) {
+        honorsBadge.innerText = 'Second Class Upper / Good';
+        honorsBadge.classList.add('good');
+        verdictText.innerText = 'Good academic standing. Keep pushing to break into the First Class honors band!';
+    } else if (finalCGPA >= 2.00) {
+        honorsBadge.innerText = 'Second Class Lower / Satisfactory';
+        honorsBadge.classList.add('satisfactory');
+        verdictText.innerText = 'Satisfactory standing. Focus on raising marks in weaker subjects to secure higher classifications.';
+    } else {
+        honorsBadge.innerText = 'Fail / Academic Warning';
+        honorsBadge.classList.add('fail');
+        verdictText.innerText = 'Academic Warning: Your GPA is currently below graduation requirements. Urgent review recommended.';
+    }
+}
+
+/**
+ * Bind input and deletion actions for a specific calculator row
+ */
+function bindRowEvents(row) {
+    const creditsInput = row.querySelector('.calc-course-credits');
+    const gpInput = row.querySelector('.calc-course-gp');
+    const deleteBtn = row.querySelector('.btn-delete-calc-row');
+    
+    creditsInput.addEventListener('input', calculateUniversityCGPA);
+    gpInput.addEventListener('input', () => {
+        let val = parseFloat(gpInput.value) || 0;
+        if (val > 4.00) gpInput.value = "4.00";
+        if (val < 0.00) gpInput.value = "0.00";
+        calculateUniversityCGPA();
+    });
+    
+    deleteBtn.addEventListener('click', () => {
+        row.remove();
+        calculateUniversityCGPA();
+        showToast('Course row removed.', 'info');
+    });
+}
+
+/**
  * Configure Standalone GPA Calculator events
  */
 function setupStandaloneCalculator() {
-    const markInputs = document.querySelectorAll('.calc-mark-input');
-    markInputs.forEach(input => {
-        input.addEventListener('input', () => {
-            const index = input.getAttribute('data-index');
-            const marks = parseInt(input.value) || 0;
-            const evalObj = getGradeAndPoint(marks);
-            
-            // Update single indicator
-            document.getElementById(`calcInd-${index}`).innerText = `Grade: ${evalObj.grade} (${evalObj.gp.toFixed(2)})`;
-            
-            // Recalculate average
-            let totalGP = 0;
-            markInputs.forEach(i => {
-                totalGP += getGradeAndPoint(parseInt(i.value) || 0).gp;
-            });
-            const finalGPA = totalGP / 5;
-            
-            // Update UI elements
-            document.getElementById('calcGpaValue').innerText = finalGPA.toFixed(2);
-            
-            const honorsBadge = document.getElementById('calcHonorsBadge');
-            const verdictText = document.getElementById('calcVerdictText');
-            
-            honorsBadge.className = 'honors-badge'; // Reset class
-            if (finalGPA >= 3.75) {
-                honorsBadge.innerText = 'First Class / Excellent';
-                honorsBadge.classList.add('excellent');
-                verdictText.innerText = 'Exceptional performance! You qualify for the highest academic Honors Classifications.';
-            } else if (finalGPA >= 3.00) {
-                honorsBadge.innerText = 'Second Class Upper / Good';
-                honorsBadge.classList.add('good');
-                verdictText.innerText = 'Good academic standing. Keep pushing to break into the First Class honors band!';
-            } else if (finalGPA >= 2.00) {
-                honorsBadge.innerText = 'Second Class Lower / Satisfactory';
-                honorsBadge.classList.add('satisfactory');
-                verdictText.innerText = 'Satisfactory standing. Focus on raising marks in weaker subjects to secure higher classifications.';
-            } else {
-                honorsBadge.innerText = 'Fail / Academic Warning';
-                honorsBadge.classList.add('fail');
-                verdictText.innerText = 'Academic Warning: Your GPA is currently below graduation requirements. Urgent review recommended.';
-            }
-        });
+    const tbody = document.getElementById('calcCourseRows');
+    const addBtn = document.getElementById('btnAddCalcRow');
+    const clearBtn = document.getElementById('btnClearCalcRows');
+    
+    // Bind existing default rows
+    const existingRows = tbody.querySelectorAll('.calc-row');
+    existingRows.forEach(row => bindRowEvents(row));
+    
+    // Add Row Action
+    addBtn.addEventListener('click', () => {
+        const tr = document.createElement('tr');
+        tr.className = 'calc-row';
+        tr.innerHTML = `
+            <td style="padding: 10px 14px;"><input class="input-field calc-course-name" type="text" required placeholder="Course Name" style="padding: 8px 12px; font-size: 0.9rem;"></td>
+            <td style="padding: 10px 14px;"><input class="input-field calc-course-credits" type="number" min="0.5" max="6.0" step="0.5" required value="3.0" style="padding: 8px 12px; font-size: 0.9rem;"></td>
+            <td style="padding: 10px 14px;"><input class="input-field calc-course-gp" type="number" min="0.00" max="4.00" step="0.01" required value="4.00" style="padding: 8px 12px; font-size: 0.9rem;"></td>
+            <td style="padding: 10px 14px; text-align: center; font-weight: 700; color: var(--accent-success);" class="calc-row-grade">A+</td>
+            <td style="padding: 10px 14px; text-align: center;">
+                <button class="btn-action btn-delete-calc-row" style="margin: 0 auto;" title="Remove Course">
+                    <svg viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                </button>
+            </td>
+        `;
+        tbody.appendChild(tr);
+        bindRowEvents(tr);
+        calculateUniversityCGPA();
+        showToast('New course row added.', 'success');
     });
+    
+    // Clear All Action
+    clearBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to clear all courses from the calculator?')) {
+            tbody.innerHTML = '';
+            calculateUniversityCGPA();
+            showToast('All course rows cleared.', 'warning');
+        }
+    });
+    
+    // Run initial calculation
+    calculateUniversityCGPA();
 }
 
 /**
