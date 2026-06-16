@@ -2,6 +2,13 @@
 
 A complete, professional, console-based Student Management System (SMS) implemented in C. This project utilizes persistent binary file storage, secure administrator login with XOR-encrypted credentials, automated grade scales and GPA/CGPA calculations, dynamic memory allocation, input formatting validation, custom terminal coloring, and logging.
 
+## Web App Interface
+
+![Web App Interface](images/student_directory.webp)
+
+## Dynamic CGPA Calculator
+
+![Dynamic CGPA Calculator](images/app_interface.png)
 ---
 
 ## Project Structure
