@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Management System</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <!-- Background Animated Orbs -->
+    <div class="glow-orb orb-1"></div>
+    <div class="glow-orb orb-2"></div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- Administrative Login Screen (Glass Overlay) -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-card glass-panel">
+            <div class="login-logo">SMS Dashboard</div>
+            <div class="login-subtitle">Secure Administrator Login</div>
+            <form id="loginForm" autocomplete="off">
+                <div class="input-group">
+                    <label class="input-label" for="loginUser">Username</label>
+                    <input class="input-field" type="text" id="loginUser" required placeholder="Enter admin username">
+                </div>
+                <div class="input-group">
+                    <label class="input-label" for="loginPass">Password</label>
+                    <input class="input-field" type="password" id="loginPass" required placeholder="Enter password">
+                    <div class="error-message" id="loginError">Invalid username or password. (3 attempts max)</div>
+                </div>
+                <button type="submit" class="login-button">Sign In</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <aside>
+        <div class="sidebar-brand">
+            <div class="brand-icon">S</div>
+            <div class="brand-name">Student<span>DB</span></div>
+        </div>
+        <ul class="nav-menu">
+            <li class="nav-item active" data-target="dashboardView">
+                <button>
+                    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+                    Dashboard
+                </button>
+            </li>
+            <li class="nav-item" data-target="directoryView">
+                <button>
+                    <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    Student Directory
+                </button>
+            </li>
+            <li class="nav-item" data-target="calculatorView">
+                <button>
+                    <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+                    GPA Calculator
+                </button>
+            </li>
+            <li class="nav-item" data-target="settingsView">
+                <button>
+                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    Settings & Logs
+                </button>
+            </li>
+        </ul>
+        <div class="sidebar-footer">
+            <div class="admin-profile">
+                <div class="admin-avatar" id="avatarLetter">A</div>
+                <div class="admin-info">
+                    <div class="admin-name" id="profileUsername">admin</div>
+                    <div class="admin-role">System Administrator</div>
+                </div>
+            </div>
+            <button class="btn-logout" id="logoutBtn">
+                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                Logout Account
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Workspace Content -->
+    <main>
+        <!-- Dynamic Views -->
+
+        <!-- 1. DASHBOARD VIEW -->
+        <div class="view-panel active" id="dashboardView">
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>Administrative Dashboard</h1>
+                    <p>Overview of academic analytics & system statistics.</p>
+                </div>
+            </div>
+
+            <!-- Stats Overview Cards -->
+            <div class="stats-grid">
+                <div class="stat-card glass-panel" style="--accent-color: var(--accent-primary);">
+                    <div class="stat-details">
+                        <h3>Total Registered</h3>
+                        <div class="stat-value" id="statTotalCount">0</div>
+                        <div class="stat-subtext">Students in system</div>
+                    </div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+                    </div>
+                </div>
+                <div class="stat-card glass-panel" style="--accent-color: var(--accent-success);">
+                    <div class="stat-details">
+                        <h3>Average GPA</h3>
+                        <div class="stat-value" id="statAvgGPA">0.00</div>
+                        <div class="stat-subtext">Class average performance</div>
+                    </div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    </div>
+                </div>
+                <div class="stat-card glass-panel" style="--accent-color: var(--accent-info);">
+                    <div class="stat-details">
+                        <h3>Highest GPA</h3>
+                        <div class="stat-value" id="statHighestGPA">0.00</div>
+                        <div class="stat-subtext">Top student score</div>
+                    </div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                </div>
+                <div class="stat-card glass-panel" style="--accent-color: var(--accent-danger);">
+                    <div class="stat-details">
+                        <h3>Lowest GPA</h3>
+                        <div class="stat-value" id="statLowestGPA">0.00</div>
+                        <div class="stat-subtext">Action recommended limit</div>
+                    </div>
+                    <div class="stat-icon">
+                        <svg viewBox="0 0 24 24"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Analytics Charts -->
+            <div class="charts-grid">
+                <div class="chart-card glass-panel">
+                    <h2>
+                        <svg viewBox="0 0 24 24"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        Department Enrolments
+                    </h2>
+                    <div class="svg-container" id="deptChartContainer">
+                        <!-- Custom SVG Chart generated dynamically -->
+                    </div>
+                </div>
+                <div class="chart-card glass-panel">
+                    <h2>
+                        <svg viewBox="0 0 24 24"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/></svg>
+                        Academic GPA Distribution
+                    </h2>
+                    <div class="svg-container" id="gpaChartContainer">
+                        <!-- Custom SVG Chart generated dynamically -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. STUDENT DIRECTORY VIEW -->
+        <div class="view-panel" id="directoryView">
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>Student Directory</h1>
+                    <p>Manage, add, search, and sort student records.</p>
+                </div>
+            </div>
+
+            <!-- Directory Controls -->
+            <div class="directory-actions">
+                <div class="search-filter-box">
+                    <div class="search-wrapper">
+                        <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                        <input class="input-field" type="text" id="searchBar" placeholder="Search by ID, Name, or Department...">
+                    </div>
+                    <select class="select-filter" id="filterDept">
+                        <option value="">All Departments</option>
+                    </select>
+                    <select class="select-filter" id="filterSem">
+                        <option value="">All Semesters</option>
+                        <option value="1">Semester 1</option>
+                        <option value="2">Semester 2</option>
+                        <option value="3">Semester 3</option>
+                        <option value="4">Semester 4</option>
+                        <option value="5">Semester 5</option>
+                        <option value="6">Semester 6</option>
+                        <option value="7">Semester 7</option>
+                        <option value="8">Semester 8</option>
+                    </select>
+                    <select class="select-filter" id="sortOption">
+                        <option value="">Sort By</option>
+                        <option value="gpa-desc">GPA (Highest to Lowest)</option>
+                        <option value="name-asc">Alphabetical (A to Z)</option>
+                    </select>
+                </div>
+                <button class="btn-primary" id="addStudentBtn">
+                    <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    Add Student
+                </button>
+            </div>
+
+            <!-- Database Student Table -->
+            <div class="glass-panel" style="padding: 10px;">
+                <div class="table-container">
+                    <table class="students-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Full Name</th>
+                                <th>Dept</th>
+                                <th>Sem</th>
+                                <th>Email</th>
+                                <th>GPA</th>
+                                <th>CGPA</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentTableBody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. GPA CALCULATOR VIEW -->
+        <div class="view-panel" id="calculatorView">
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>Standalone GPA Calculator</h1>
+                    <p>Enter subjects marks to evaluate GPA and Honors Classifications.</p>
+                </div>
+            </div>
+
+            <div class="calculator-container">
+                <div class="calculator-panel glass-panel">
+                    <h2>Enter Marks for 5 Core Subjects</h2>
+                    <form id="calcForm">
+                        <div class="calc-marks-grid">
+                            <div class="calc-input-row">
+                                <span class="subject-name-label">Subject 1 (Math)</span>
+                                <input class="input-field calc-mark-input" type="number" min="0" max="100" required value="85" data-index="0">
+                                <div class="calc-indicator" id="calcInd-0">Grade: A (3.75)</div>
+                            </div>
+                            <div class="calc-input-row">
+                                <span class="subject-name-label">Subject 2 (Physics)</span>
+                                <input class="input-field calc-mark-input" type="number" min="0" max="100" required value="78" data-index="1">
+                                <div class="calc-indicator" id="calcInd-1">Grade: B+ (3.25)</div>
+                            </div>
+                            <div class="calc-input-row">
+                                <span class="subject-name-label">Subject 3 (Chemistry)</span>
+                                <input class="input-field calc-mark-input" type="number" min="0" max="100" required value="92" data-index="2">
+                                <div class="calc-indicator" id="calcInd-2">Grade: A+ (4.00)</div>
+                            </div>
+                            <div class="calc-input-row">
+                                <span class="subject-name-label">Subject 4 (Comp Science)</span>
+                                <input class="input-field calc-mark-input" type="number" min="0" max="100" required value="88" data-index="3">
+                                <div class="calc-indicator" id="calcInd-3">Grade: A (3.75)</div>
+                            </div>
+                            <div class="calc-input-row">
+                                <span class="subject-name-label">Subject 5 (English)</span>
+                                <input class="input-field calc-mark-input" type="number" min="0" max="100" required value="74" data-index="4">
+                                <div class="calc-indicator" id="calcInd-4">Grade: B (3.00)</div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="calc-results-panel glass-panel">
+                    <div class="gpa-circle">
+                        <div class="gpa-circle-value" id="calcGpaValue">3.55</div>
+                        <div class="gpa-circle-label">Semester GPA</div>
+                    </div>
+                    <div class="honors-badge good" id="calcHonorsBadge">Second Class Upper / Good</div>
+                    <div class="calc-verdict-text" id="calcVerdictText">Excellent work! Maintaining a high GPA opens up honors classifications and advanced enrollment opportunities.</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. SETTINGS & SYSTEM LOGS VIEW -->
+        <div class="view-panel" id="settingsView">
+            <div class="page-header">
+                <div class="page-title">
+                    <h1>Settings & Activity Logs</h1>
+                    <p>Configure database persistence, security credentials, and audits.</p>
+                </div>
+            </div>
+
+            <div class="settings-grid">
+                <!-- Administrative Settings -->
+                <div class="settings-card glass-panel">
+                    <div>
+                        <h3>Database Operations</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 6px; margin-bottom: 14px;">Import, export or reset system data records.</p>
+                        <div class="settings-actions">
+                            <button class="btn-settings-action" id="btnExportCSV">Export Database to CSV</button>
+                            <button class="btn-settings-action" id="btnBackupJSON">Backup Database (JSON)</button>
+                            <div class="file-input-wrapper">
+                                <button class="btn-settings-action">Restore Database from JSON</button>
+                                <input type="file" id="importJSONFile" accept=".json">
+                            </div>
+                            <button class="btn-settings-action danger" id="btnResetDB">Reset Database to Sample Data</button>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3>Administrator Credentials</h3>
+                        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-top: 6px; margin-bottom: 14px;">Update system access password.</p>
+                        <form id="changePasswordForm">
+                            <div class="input-group" style="margin-bottom: 14px;">
+                                <label class="input-label" for="oldPasswordInput">Current Password</label>
+                                <input class="input-field" type="password" id="oldPasswordInput" required placeholder="Enter current password">
+                            </div>
+                            <div class="input-group" style="margin-bottom: 14px;">
+                                <label class="input-label" for="newPasswordInput">New Password</label>
+                                <input class="input-field" type="password" id="newPasswordInput" required placeholder="Enter new password (6+ chars)">
+                            </div>
+                            <button type="submit" class="btn-primary" style="width: 100%; justify-content: center;">Change Password</button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- Live Audit Logs Console -->
+                <div class="terminal-card glass-panel">
+                    <div class="terminal-header">
+                        <h3>System Activity Logs</h3>
+                        <div class="terminal-controls">
+                            <button class="btn-settings-action" id="btnClearLogs" style="padding: 6px 12px; font-size: 0.8rem; margin: 0;">Clear Logs</button>
+                        </div>
+                    </div>
+                    <div class="terminal-box" id="logTerminalBox">
+                        <!-- Activity logs rendered here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Slide-in Drawer overlay (Add & Edit Student Record Form) -->
+    <div class="drawer-overlay" id="drawerOverlay">
+        <div class="side-drawer" id="sideDrawer">
+            <div class="drawer-header">
+                <h3 class="drawer-title" id="drawerTitle">Add Student Record</h3>
+                <button class="btn-close" id="drawerCloseBtn">
+                    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </button>
+            </div>
+            
+            <form id="studentForm">
+                <input type="hidden" id="formMode" value="add"> <!-- 'add' or 'edit' -->
+                
+                <div class="input-group">
+                    <label class="input-label" for="studentId">Student ID</label>
+                    <input class="input-field" type="text" id="studentId" required placeholder="e.g. S104">
+                    <div class="error-message" id="errStudentId">Invalid ID format. (Alphanumeric/hyphens only)</div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="input-group">
+                        <label class="input-label" for="studentName">Full Name</label>
+                        <input class="input-field" type="text" id="studentName" required placeholder="John Doe">
+                        <div class="error-message" id="errStudentName">Invalid characters in name.</div>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="studentDept">Department</label>
+                        <input class="input-field" type="text" id="studentDept" required placeholder="CSE">
+                    </div>
+                </div>
+
+                <div class="form-grid-2">
+                    <div class="input-group">
+                        <label class="input-label" for="studentSemester">Semester</label>
+                        <select class="input-field" id="studentSemester" required>
+                            <option value="1">Semester 1</option>
+                            <option value="2">Semester 2</option>
+                            <option value="3">Semester 3</option>
+                            <option value="4">Semester 4</option>
+                            <option value="5">Semester 5</option>
+                            <option value="6">Semester 6</option>
+                            <option value="7">Semester 7</option>
+                            <option value="8">Semester 8</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <label class="input-label" for="studentPhone">Phone Number</label>
+                        <input class="input-field" type="text" id="studentPhone" required placeholder="e.g. +1234567890">
+                        <div class="error-message" id="errStudentPhone">Must be a valid phone number (7-15 digits).</div>
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="studentEmail">Email Address</label>
+                    <input class="input-field" type="email" id="studentEmail" required placeholder="john@email.com">
+                    <div class="error-message" id="errStudentEmail">Must be a valid email syntax.</div>
+                </div>
+
+                <!-- Academic Subjects Marks Panel -->
+                <div class="subject-marks-section">
+                    <h4>Course Subject Marks (0 - 100)</h4>
+                    <div class="subject-input-row">
+                        <span class="subject-name-label">Mathematics</span>
+                        <input class="input-field sub-mark" type="number" id="subMath" min="0" max="100" required value="0">
+                    </div>
+                    <div class="subject-input-row">
+                        <span class="subject-name-label">Physics</span>
+                        <input class="input-field sub-mark" type="number" id="subPhys" min="0" max="100" required value="0">
+                    </div>
+                    <div class="subject-input-row">
+                        <span class="subject-name-label">Chemistry</span>
+                        <input class="input-field sub-mark" type="number" id="subChem" min="0" max="100" required value="0">
+                    </div>
+                    <div class="subject-input-row">
+                        <span class="subject-name-label">Computer Science</span>
+                        <input class="input-field sub-mark" type="number" id="subCS" min="0" max="100" required value="0">
+                    </div>
+                    <div class="subject-input-row">
+                        <span class="subject-name-label">English</span>
+                        <input class="input-field sub-mark" type="number" id="subEng" min="0" max="100" required value="0">
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="studentCGPA">Cumulative CGPA</label>
+                    <input class="input-field" type="number" step="0.01" min="0" max="4.00" id="studentCGPA" placeholder="Enter CGPA (suggested: same as Semester GPA)" required>
+                </div>
+
+                <div class="drawer-footer">
+                    <button type="button" class="btn-secondary" id="formCancelBtn">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Student</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>
